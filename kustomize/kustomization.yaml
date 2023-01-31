@@ -17,13 +17,4 @@ kind: Kustomization
 resources:
 - base
 components:
-# - components/cymbal-branding
-# - components/google-cloud-operations
-# - components/memorystore
-# - components/network-policies
-# - components/service-accounts
-# - components/spanner
-# - components/container-images-tag
-# - components/container-images-tag-suffix
-# - components/container-images-registry
-# - components/native-grpc-health-check
+- components/datadog

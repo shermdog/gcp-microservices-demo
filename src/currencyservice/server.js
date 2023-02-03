@@ -40,14 +40,31 @@ if(process.env.ENABLE_TRACING == "1") {
   console.log("Tracing enabled.")
   const { NodeTracerProvider } = require('@opentelemetry/sdk-trace-node');
   const { SimpleSpanProcessor } = require('@opentelemetry/sdk-trace-base');
-  const { OTLPTraceExporter } = require("@opentelemetry/exporter-otlp-grpc");
+  const { OTLPTraceExporter } = require("@opentelemetry/exporter-trace-otlp-grpc");
+  const { diag, DiagConsoleLogger, DiagLogLevel } = require('@opentelemetry/api');
+  const opentelemetry = require("@opentelemetry/sdk-node");
+  const { getNodeAutoInstrumentations } = require("@opentelemetry/auto-instrumentations-node");
+  const { envDetector, processDetector } = require("@opentelemetry/resources");
 
-  const provider = new NodeTracerProvider();
+  // debug
+  // diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
+
+  // const provider = new NodeTracerProvider();
   
   const collectorUrl = process.env.COLLECTOR_SERVICE_ADDR
 
-  provider.addSpanProcessor(new SimpleSpanProcessor(new OTLPTraceExporter({url: collectorUrl})));
-  provider.register();
+  // provider.addSpanProcessor(new SimpleSpanProcessor(new OTLPTraceExporter({url: collectorUrl})));
+  // provider.register();
+
+
+  const sdk = new opentelemetry.NodeSDK({
+    traceExporter: new OTLPTraceExporter({url: collectorUrl}),
+    instrumentations: [getNodeAutoInstrumentations()],
+    // Make sure to add all detectors you need here!
+    resourceDetectors: [envDetector, processDetector],
+  });
+
+  sdk.start();
 }
 else {
   console.log("Tracing disabled.")

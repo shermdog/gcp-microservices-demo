@@ -1,115 +1,98 @@
-# Copyright 2022 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: opentelemetrycollector
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: opentelemetrycollector
-  template:
-    metadata:
-      labels:
-        app: opentelemetrycollector
-    spec:
-      securityContext:
-        fsGroup: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
-      # Init container retrieves the current cloud project id from the metadata server
-      # and inserts it into the collector config template
-      # https://cloud.google.com/compute/docs/storing-retrieving-metadata
-      initContainers:
-      - name: otel-gateway-init
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - all
-          privileged: false
-          readOnlyRootFilesystem: true
-        image: busybox:latest@sha256:05a79c7279f71f86a2a0d05eb72fcb56ea36139150f0a75cd87e80a4272e4e39
-        command:
-        - '/bin/sh'
-        - '-c'
-        - |
-           sed "s/{{PROJECT_ID}}/$(curl -H 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/project/project-id)/" /template/collector-gateway-config-template.yaml >> /conf/collector-gateway-config.yaml
-        volumeMounts:
-        - name: collector-gateway-config-template
-          mountPath: /template
-        - name: collector-gateway-config
-          mountPath: /conf
-      containers:
-      # This gateway container will receive traces and metrics from each microservice
-      # and forward it to Datadog
-      - name: otel-gateway
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - all
-          privileged: false
-          readOnlyRootFilesystem: true
-        args:
-        - --config=/conf/collector-gateway-config.yaml
-        image: otel/opentelemetry-collector-contrib:0.68.0@sha256:cfe2c9172af2d6ad8ee2340c833fba14bce1c6fa5641f5ff20b4267e66ad6164
-        volumeMounts:
-        - name: collector-gateway-config
-          mountPath: /conf
-      volumes:
-      # Simple ConfigMap volume with template file
-      - name: collector-gateway-config-template
-        configMap:
-          items:
-          - key: collector-gateway-config-template.yaml
-            path: collector-gateway-config-template.yaml
-          name: collector-gateway-config-template
-      # Create a volume to store the expanded template (with correct cloud project ID)
-      - name: collector-gateway-config
-        emptyDir: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: opentelemetrycollector
-spec:
-  ports:
-  - name: grpc-otlp
-    port: 4317
-    protocol: TCP
-    targetPort: 4317
-  selector:
-    app: opentelemetrycollector
-  type: ClusterIP
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: collector-gateway-config-template
-# Open Telemetry Collector config
-# https://opentelemetry.io/docs/collector/configuration/
+  name: otel-collector-config
 data:
-  collector-gateway-config-template.yaml: |
+  config.yaml: |-
     receivers:
       otlp:
         protocols: 
           grpc:
+      filelog:
+        include:
+          - /var/log/pods/*/*/*.log
+        exclude:
+          # Exclude logs from all containers named otel-collector
+          - /var/log/pods/*/otel-collector/*.log
+        start_at: beginning
+        include_file_path: true
+        include_file_name: false
+        operators:
+          # Find out which format is used by kubernetes
+          - type: router
+            id: get-format
+            routes:
+              - output: parser-docker
+                expr: 'body matches "^\\{"'
+              - output: parser-crio
+                expr: 'body matches "^[^ Z]+ "'
+              - output: parser-containerd
+                expr: 'body matches "^[^ Z]+Z"'
+          # Parse CRI-O format
+          - type: regex_parser
+            id: parser-crio
+            regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$'
+            output: extract_metadata_from_filepath
+            timestamp:
+              parse_from: attributes.time
+              layout_type: gotime
+              layout: '2006-01-02T15:04:05.000000000-07:00'
+          # Parse CRI-Containerd format
+          - type: regex_parser
+            id: parser-containerd
+            regex: '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$'
+            output: extract_metadata_from_filepath
+            timestamp:
+              parse_from: attributes.time
+              layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          # Parse Docker format
+          - type: json_parser
+            id: parser-docker
+            output: extract_metadata_from_filepath
+            timestamp:
+              parse_from: attributes.time
+              layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          - type: move
+            from: attributes.log
+            to: body
+          # Extract metadata from file path
+          - type: regex_parser
+            id: extract_metadata_from_filepath
+            regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]{36})\/(?P<container_name>[^\._]+)\/(?P<restart_count>\d+)\.log$'
+            parse_from: attributes["log.file.path"]
+          # Parse traces
+          - id: parse_log
+            type: json_parser
+            if: 'attributes.log matches "^{.*}$"'
+            parse_from: attributes.log
+          - id: trace
+            type: trace_parser
+            trace_id:
+              parse_from: attributes.trace_id
+            span_id:
+              parse_from: attributes.span_id
+          # Rename attributes
+          - type: move
+            from: attributes.stream
+            to: attributes["log.iostream"]
+          - type: move
+            from: attributes.container_name
+            to: resource["k8s.container.name"]
+          - type: move
+            from: attributes.namespace
+            to: resource["k8s.namespace.name"]
+          - type: move
+            from: attributes.pod_name
+            to: resource["k8s.pod.name"]
+          - type: move
+            from: attributes.restart_count
+            to: resource["k8s.container.restart_count"]
+          - type: move
+            from: attributes.uid
+            to: resource["k8s.pod.uid"]
+        attributes:
+          ddtags: env:demo
     processors:
       batch:
         # Datadog APM Intake limit is 3.2MB. Let's make sure the batches do not
@@ -121,6 +104,10 @@ data:
       datadog:
         api:
           key: replaceme
+      logging:
+        verbosity: detailed
+        sampling_initial: 5
+        sampling_thereafter: 10
     service:
       pipelines:
         traces:
@@ -131,3 +118,82 @@ data:
           receivers: [otlp]
           processors: [batch]
           exporters: [datadog] # Export metrics to Datadog
+        logs:
+          receivers: [filelog]
+          processors: [batch]
+          exporters: [datadog]
+      # telemetry:
+      #   logs:
+      #     level: "debug"          
+
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: otel-collector
+  labels:
+    app: opentelemetry
+    component: otel-collector
+spec:
+  selector:
+    matchLabels:
+      app: opentelemetry
+      component: otel-collector
+  template:
+    metadata:
+      labels:
+        app: opentelemetry
+        component: otel-collector
+    spec:
+      containers:
+      - name: otel-collector
+        image: otel/opentelemetry-collector-contrib:0.70.0
+        resources:
+          limits:
+            cpu: 100m
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - mountPath: /var/log
+          name: varlog
+          readOnly: true
+        - mountPath: /var/lib/docker/containers
+          name: varlibdockercontainers
+          readOnly: true
+        - mountPath: /etc/otelcol-contrib/config.yaml
+          name: data
+          subPath: config.yaml
+          readOnly: true
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: data
+        configMap:
+          name: otel-collector-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-collector
+  labels:
+    app: opentelemetry
+    component: otel-collector
+spec:
+  ports:
+  - name: metrics # Default endpoint for querying metrics.
+    port: 8888
+  - name: grpc-otlp
+    port: 4317
+    protocol: TCP
+    targetPort: 4317    
+  selector:
+    component: otel-collector
+  type: ClusterIP

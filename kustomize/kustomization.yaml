@@ -24,6 +24,7 @@ components:
 # - components/non-public-frontend
 # - components/service-accounts
 # - components/alloydb
+- components/shopping-assistant
 # - components/single-shared-session
 # - components/spanner
 # - components/service-mesh-istio

@@ -26,6 +26,12 @@ spec:
     metadata:
       labels:
         app: shoppingassistantservice
+        tags.datadoghq.com/env: "demo" # Unified service tag - Pod Env tag
+        tags.datadoghq.com/service: "shoppingassistantservice" # Unified service tag - Pod Service tag
+        tags.datadoghq.com/version: "0.10.2" # Unified service tag - Pod Version tag
+        admission.datadoghq.com/enabled: "true" # Enable Admission Controller to mutate new pods in this deployment
+      annotations:
+        admission.datadoghq.com/python-lib.version: "2.14.7"
     spec:
       serviceAccountName: shoppingassistantservice
       terminationGracePeriodSeconds: 5
@@ -43,7 +49,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: false
-        image: shoppingassistantservice
+        image: us-central1-docker.pkg.dev/google-samples/microservices-demo/shoppingassistantservice:v0.10.2
         ports:
         - name: http
           containerPort: 8080
@@ -69,8 +75,8 @@ spec:
             cpu: 100m
             memory: 64Mi
           limits:
-            cpu: 200m
-            memory: 128Mi
+            cpu: 400m
+            memory: 256Mi
 ---
 apiVersion: v1
 kind: Service

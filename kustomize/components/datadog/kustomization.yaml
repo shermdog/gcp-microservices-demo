@@ -33,7 +33,7 @@ patches:
         metadata:
           labels:
             app: adservice
-            tags.datadoghq.com/env: "demo" # Unified service tag - Pod Env tag
+            tags.datadoghq.com/env: "autotest" # Unified service tag - Pod Env tag
             tags.datadoghq.com/service: "adservice" # Unified service tag - Pod Service tag
             tags.datadoghq.com/version: "0.10.1" # Unified service tag - Pod Version tag
             admission.datadoghq.com/enabled: "true" # Enable Admission Controller to mutate new pods in this deployment
@@ -75,7 +75,7 @@ patches:
         metadata:
           labels:
             app: cartservice
-            tags.datadoghq.com/env: "demo" # Unified service tag - Pod Env tag
+            tags.datadoghq.com/env: "autotest" # Unified service tag - Pod Env tag
             tags.datadoghq.com/service: "cartservice" # Unified service tag - Pod Service tag
             tags.datadoghq.com/version: "0.10.1" # Unified service tag - Pod Version tag
             admission.datadoghq.com/enabled: "true" # Enable Admission Controller to mutate new pods in this deployment
@@ -271,15 +271,49 @@ helmCharts:
   valuesInline:
     datadog:
       apiKey: replaceme
+      apm:
+        portEnabled: true
       logs:
         enabled: true
         containerCollectAll: true
       env:
         - name: DD_ENV
-          value: demo
+          value: autotest
       otlp:
         receiver:
           protocols:
             grpc:
               endpoint: 0.0.0.0:4317
               enabled: true
+    agents:
+      containers:
+        agent:
+          # resources for the Agent container
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+
+        traceAgent:
+          # resources for the Trace Agent container
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+
+        processAgent:
+          # resources for the Process Agent container
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+
+      priorityClassCreate: true
+
+    providers:
+      gke:
+        autopilot: true
+
+    clusterAgent:
+      admissionController:
+        configMode: service

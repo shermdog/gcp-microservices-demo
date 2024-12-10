@@ -1,0 +1,101 @@
+# Copyright 2024 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shoppingassistantservice
+  labels:
+    app: shoppingassistantservice
+spec:
+  selector:
+    matchLabels:
+      app: shoppingassistantservice
+  template:
+    metadata:
+      labels:
+        app: shoppingassistantservice
+        tags.datadoghq.com/env: "demo" # Unified service tag - Pod Env tag
+        tags.datadoghq.com/service: "shoppingassistantservice" # Unified service tag - Pod Service tag
+        tags.datadoghq.com/version: "0.10.2" # Unified service tag - Pod Version tag
+        admission.datadoghq.com/enabled: "true" # Enable Admission Controller to mutate new pods in this deployment
+      annotations:
+        admission.datadoghq.com/python-lib.version: "2.14.7"
+    spec:
+      serviceAccountName: shoppingassistantservice
+      terminationGracePeriodSeconds: 5
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: server
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          privileged: false
+          readOnlyRootFilesystem: false
+        image: us-central1-docker.pkg.dev/google-samples/microservices-demo/shoppingassistantservice:v0.10.2
+        ports:
+        - name: http
+          containerPort: 8080
+        env:
+        - name: GOOGLE_API_KEY
+          value: GOOGLE_API_KEY_VAL
+        - name: ALLOYDB_CLUSTER_NAME
+          value: test-cluster
+        - name: ALLOYDB_INSTANCE_NAME
+          value: test-alloydb-instance
+        - name: ALLOYDB_DATABASE_NAME
+          value: products
+        - name: ALLOYDB_TABLE_NAME
+          value: catalog_items
+        - name: ALLOYDB_SECRET_NAME
+          value: test-alloydb-secret
+        - name: PROJECT_ID
+          value: datadog-community
+        - name: REGION
+          value: us-central1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 400m
+            memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shoppingassistantservice
+  labels:
+    app: shoppingassistantservice
+spec:
+  type: ClusterIP
+  selector:
+    app: shoppingassistantservice
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: shoppingassistantservice
+  annotations:
+    iam.gke.io/gcp-service-account: test-alloydb-sa@datadog-community.iam.gserviceaccount.com

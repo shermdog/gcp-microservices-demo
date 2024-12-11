@@ -31,6 +31,9 @@ ALLOYDB_TABLE_NAME = os.environ["ALLOYDB_TABLE_NAME"]
 ALLOYDB_CLUSTER_NAME = os.environ["ALLOYDB_CLUSTER_NAME"]
 ALLOYDB_INSTANCE_NAME = os.environ["ALLOYDB_INSTANCE_NAME"]
 ALLOYDB_SECRET_NAME = os.environ["ALLOYDB_SECRET_NAME"]
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "models/embedding-001")
+VISION_MODEL_1 = os.getenv("VISION_MODEL_1", "gemini-1.5-flash")
+VISION_MODEL_2 = os.getenv("VISION_MODEL_2", "gemini-1.5-flash")
 
 secret_manager_client = secretmanager_v1.SecretManagerServiceClient()
 secret_name = secret_manager_client.secret_version_path(project=PROJECT_ID, secret=ALLOYDB_SECRET_NAME, secret_version="latest")
@@ -52,7 +55,7 @@ engine = AlloyDBEngine.from_instance(
 vectorstore = AlloyDBVectorStore.create_sync(
     engine=engine,
     table_name=ALLOYDB_TABLE_NAME,
-    embedding_service=GoogleGenerativeAIEmbeddings(model="models/embedding-001"),
+    embedding_service=GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL),
     id_column="id",
     content_column="description",
     embedding_column="product_embedding",
@@ -69,7 +72,7 @@ def create_app():
         prompt = unquote(prompt)
 
         # Step 1 – Get a room description from Gemini-vision-pro
-        llm_vision = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
+        llm_vision = ChatGoogleGenerativeAI(model=VISION_MODEL_1)
         message = HumanMessage(
             content=[
                 {
@@ -99,7 +102,7 @@ def create_app():
             relevant_docs += str(doc_details) + ", "
 
         # Step 3 – Tie it all together by augmenting our call to Gemini-pro
-        llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
+        llm = ChatGoogleGenerativeAI(model=VISION_MODEL_2)
         design_prompt = (
             f" You are an interior designer that works for Online Boutique. You are tasked with providing recommendations to a customer on what they should add to a given room from our catalog. This is the description of the room: \n"
             f"{description_response} Here are a list of products that are relevant to it: {relevant_docs} Specifically, this is what the customer has asked for, see if you can accommodate it: {prompt} Start by repeating a brief description of the room's design to the customer, then provide your recommendations. Do your best to pick the most relevant item out of the list of products provided, but if none of them seem relevant, then say that instead of inventing a new product. At the end of the response, add a list of the IDs of the relevant products in the following format for the top 3 results: [<first product ID>], [<second product ID>], [<third product ID>] ")

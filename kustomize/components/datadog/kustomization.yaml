@@ -14,8 +14,6 @@
 
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
-# resources:
-#   - otel-collector.yaml
 patches:
 # adservice - Use Datadog Single Step APM
 - patch: |-
@@ -316,4 +314,4 @@ helmCharts:
 
     clusterAgent:
       admissionController:
-        configMode: hostip
+        configMode: service

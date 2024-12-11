@@ -73,7 +73,7 @@ resource "google_alloydb_instance" "alloydb_instance_primary" {
   instance_id = var.alloydb_instance_name
   cluster     = google_alloydb_cluster.alloydb_cluster.id
   machine_config {
-   cpu_count   = 4 
+   cpu_count   = 4
   }
   network_config {
     enable_public_ip = true
@@ -88,7 +88,7 @@ resource "google_alloydb_instance" "alloydb_instance_replica" {
   instance_id = "${var.alloydb_instance_name}-replica"
   cluster     = google_alloydb_cluster.alloydb_cluster.id
   machine_config {
-   cpu_count   = 4 
+   cpu_count   = 4
   }
   instance_type = "READ_POOL"
   read_pool_config {
@@ -160,8 +160,8 @@ locals {
         ALLOYDB_CARTS_DATABASE_NAME_VAL = var.alloydb_carts_database_name,
         ALLOYDB_CARTS_TABLE_NAME_VAL = var.alloydb_carts_table_name,
         ALLOYDB_PRODUCTS_DATABASE_NAME_VAL = var.alloydb_products_database_name,
-        ALLOYDB_PRODUCTS_TABLE_NAME_VAL = var.alloydb_products_table_name,        
-        ALLOYDB_SECRET_NAME_VAL = var.alloydb_secret_name,        
+        ALLOYDB_PRODUCTS_TABLE_NAME_VAL = var.alloydb_products_table_name,
+        ALLOYDB_SECRET_NAME_VAL = var.alloydb_secret_name,
     })
 }
 
@@ -178,9 +178,9 @@ locals {
         ALLOYDB_CLUSTER_NAME_VAL = var.alloydb_cluster_name,
         ALLOYDB_INSTANCE_NAME_VAL = var.alloydb_instance_name,
         ALLOYDB_DATABASE_NAME_VAL = var.alloydb_products_database_name,
-        ALLOYDB_TABLE_NAME_VAL = var.alloydb_products_table_name,        
+        ALLOYDB_TABLE_NAME_VAL = var.alloydb_products_table_name,
         ALLOYDB_SECRET_NAME_VAL = var.alloydb_secret_name,
-        ALLOYDB_USER_GSA_ID = google_service_account.alloydb_user_gsa.email, 
+        ALLOYDB_USER_GSA_ID = google_service_account.alloydb_user_gsa.email,
     })
 }
 
@@ -197,7 +197,7 @@ locals {
         ALLOYDB_CARTS_DATABASE_NAME = var.alloydb_carts_database_name,
         ALLOYDB_CARTS_TABLE_NAME = var.alloydb_carts_table_name,
         ALLOYDB_PRODUCTS_DATABASE_NAME = var.alloydb_products_database_name,
-        ALLOYDB_PRODUCTS_TABLE_NAME = var.alloydb_products_table_name,         
+        ALLOYDB_PRODUCTS_TABLE_NAME = var.alloydb_products_table_name,
     })
 }
 

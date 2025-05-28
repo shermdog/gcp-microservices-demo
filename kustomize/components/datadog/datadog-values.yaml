@@ -8,9 +8,12 @@ datadog:
       enabled: true                 
       targets:
         - name: "default-target"
-          namespaceSelector:
-            matchNames:
-              - "default"
+          podSelector:
+              matchExpressions:
+                - key: app
+                  operator: NotIn
+                  values:
+                  - adservice
           ddTraceVersions:
             java: "1"
             python: "3"
@@ -20,7 +23,7 @@ datadog:
   logs:
     enabled: true
     containerCollectAll: true
-  logLevel: debug
+  # logLevel: debug
   env:
     - name: DD_ENV
       value: demo
@@ -37,6 +40,8 @@ datadog:
     processCollection: true   
   kubelet:
     useApiServer: true
+  kubeStateMetricsCore:
+    enabled: true
   asm:
     threats:
       enabled: true
@@ -44,48 +49,31 @@ datadog:
     enabled: true
   cspm:
     enabled: true
+  securityAgent:
+    # Enables Threat Detection
+    runtime:
+      enabled: true
+    # Enables Misconfigurations
+    compliance:
+      enabled: true
+      host_benchmarks:
+        enabled: true
   sbom:
     enabled: true
     containerImage:
       enabled: true
+      uncompressedLayersSupport: true
     host:
       enabled: true
 agents:
   image:
     tag: 7.66.0
-  containers:
-    agent:
-      # resources for the Agent container
-      resources:
-        requests:
-          cpu: 200m
-          memory: 256Mi
-
-    traceAgent:
-      # resources for the Trace Agent container
-      resources:
-        requests:
-          cpu: 100m
-          memory: 200Mi
-
-    processAgent:
-      # resources for the Process Agent container
-      resources:
-        requests:
-          cpu: 100m
-          memory: 200Mi
-
-  priorityClassCreate: true
-
-providers:
-  gke:
-    autopilot: true
 
 clusterAgent:
   image:
     tag: 7.66.0
   admissionController:
-    configMode: hostip
+    configMode: socket
     mutateUnlabelled: true
 
 

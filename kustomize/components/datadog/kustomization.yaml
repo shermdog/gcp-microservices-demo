@@ -101,3 +101,17 @@ patches:
               env:
               - name: DISABLE_PROFILER
                 $patch: delete
+# adservice - Disable DD_APPSEC
+- patch: |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: adservice
+    spec:
+      template:
+        spec:
+          containers:
+            - name: server
+              env:
+              - name: DD_APPSEC_ENABLED
+                value: "0"

@@ -208,7 +208,7 @@ header .top-left-logo {
   height: 40px;
 }
 
-header .top-left-logo-cymbal {
+header .top-left-logo-purple {
   height: 30px;
 }
 
@@ -244,7 +244,7 @@ footer.py-5 {
 
 footer .footer-top {
   padding: 60px 0px;
-  background-color: #570D2E;
+  background-color: #8e44ad;
   color: white;
 }
 
@@ -375,7 +375,7 @@ similar to that of the hot-products-row.
 .home-desktop-footer-row {
   padding-left: 9%;
   padding-right: 9%;
-  background-color: #570D2E;
+  background-color: #8e44ad;
   width: 100%;
   margin: 0;
 }
@@ -481,7 +481,7 @@ similar to that of the hot-products-row.
   height: 5px;
 }
 
-.h-product .cymbal-button-primary {
+.h-product .purple-button-primary {
   margin-top: 16px;
 }
 
@@ -586,16 +586,16 @@ select {
   -webkit-border-radius: 0px;
 }
 
-/* Cymbal */
+/* Purple (formerly Cymbal) */
 
 /*
-If we ever decide to create a separate Cymbal CSS library for Cymbal components,
+If we ever decide to create a separate purple CSS library for purple components,
 the rules below could be extracted.
 */
 
-.cymbal-button-primary, .cymbal-button-secondary {
+.purple-button-primary, .purple-button-secondary {
   display: inline-block;
-  border: solid 1px #CE0631;
+  border: solid 1px #9b59b6;
   padding: 8px 16px;
   outline: none;
   font-size: 14px;
@@ -603,49 +603,49 @@ the rules below could be extracted.
   cursor: pointer;
 }
 
-.cymbal-button-primary:focus, .cymbal-button-secondary:focus {
+.purple-button-primary:focus, .purple-button-secondary:focus {
   outline: none; /* To override browser (Chrome) default blue outline. */
 }
 
-.cymbal-button-primary {
-  background-color: #CE0631;
+.purple-button-primary {
+  background-color: #9b59b6;
   color: white;
 }
 
-.cymbal-button-primary:active,
-.cymbal-button-primary:focus,
-.cymbal-button-primary:hover {
-  border: solid 1px #7b031d;
-  background-color: #7b031d;
+.purple-button-primary:active,
+.purple-button-primary:focus,
+.purple-button-primary:hover {
+  border: solid 1px #8e44ad;
+  background-color: #8e44ad;
   box-shadow: 0px 2px 2px 0px rgb(0 0 0 / 30%);
 }
 
-.cymbal-button-primary:active {
+.purple-button-primary:active {
   box-shadow: 0px 3px 6px 0px rgb(0 0 0 / 30%);
 }
 
-.cymbal-button-secondary {
+.purple-button-secondary {
   background: none;
-  color: #CE0631;
+  color: #9b59b6;
 }
 
-.cymbal-button-secondary:active,
-.cymbal-button-secondary:focus,
-.cymbal-button-secondary:hover {
-  color: #7b031d;
-  border: solid 1px #7b031d;
+.purple-button-secondary:active,
+.purple-button-secondary:focus,
+.purple-button-secondary:hover {
+  color: #8e44ad;
+  border: solid 1px #8e44ad;
 }
 
-.cymbal-button-secondary:active {
+.purple-button-secondary:active {
   background-color: #f5ccd5;
 }
 
-.cymbal-form-field {
+.purple-form-field {
   position: relative;
   margin-top: 24px;
 }
 
-.cymbal-form-field label {
+.purple-form-field label {
   width: 100%;
   margin: 0;
   padding: 8px 16px 0 16px;
@@ -657,10 +657,10 @@ the rules below could be extracted.
   background-color: white;
 }
 
-.cymbal-form-field input[type='email'],
-.cymbal-form-field input[type='password'],
-.cymbal-form-field select,
-.cymbal-form-field input[type='text'] {
+.purple-form-field input[type='email'],
+.purple-form-field input[type='password'],
+.purple-form-field select,
+.purple-form-field input[type='text'] {
   width: 100%;
   border: none;
   border-bottom: 1px solid #9AA0A6;
@@ -669,7 +669,7 @@ the rules below could be extracted.
   color: #1E2021;
 }
 
-.cymbal-form-field .cymbal-dropdown-chevron {
+.purple-form-field .purple-dropdown-chevron {
   position: absolute;
   right: 25px;
   width: 10px;

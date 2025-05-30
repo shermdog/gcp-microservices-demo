@@ -2,9 +2,9 @@
     "products": [
         {
             "id": "OLJCESPC7Z",
-            "name": "Sunglasses",
-            "description": "Add a modern touch to your outfits with these sleek aviator sunglasses.",
-            "picture": "/static/img/products/sunglasses.jpg",
+            "name": "Black Dog Sunglasses",
+            "description": "These black dog sunglasses are perfect for your furry friend.",
+            "picture": "/static/img/products/black-dog-sunglasses.jpg",
             "priceUsd": {
                 "currencyCode": "USD",
                 "units": 19,
@@ -14,9 +14,9 @@
         },
         {
             "id": "66VCHSJNUP",
-            "name": "Tank Top",
-            "description": "Perfectly cropped cotton tank, with a scooped neckline.",
-            "picture": "/static/img/products/tank-top.jpg",
+            "name": "Purple Dog Tank Top",
+            "description": "This purple dog tank top is the ideal attire for your doggo.",
+            "picture": "/static/img/products/purple-dog-tank-top.jpg",
             "priceUsd": {
                 "currencyCode": "USD",
                 "units": 18,
@@ -26,9 +26,9 @@
         },
         {
             "id": "1YMWWN1N4O",
-            "name": "Watch",
-            "description": "This gold-tone stainless steel watch will work with most of your outfits.",
-            "picture": "/static/img/products/watch.jpg",
+            "name": "Custom Dog Food Bowl",
+            "description": "This custom dog food bowl is perfect for your pet.",
+            "picture": "/static/img/products/custom-dog-food-bowl.jpg",
             "priceUsd": {
                 "currencyCode": "USD",
                 "units": 109,
@@ -38,9 +38,9 @@
         },
         {
             "id": "L9ECAV7KIM",
-            "name": "Loafers",
-            "description": "A neat addition to your summer wardrobe.",
-            "picture": "/static/img/products/loafers.jpg",
+            "name": "Paw Print Dog Booties",
+            "description": "These paw print dog booties are stylish and adorable.",
+            "picture": "/static/img/products/paw-print-dog-booties.jpg",
             "priceUsd": {
                 "currencyCode": "USD",
                 "units": 89,
@@ -50,8 +50,8 @@
         },
         {
             "id": "2ZYFJ3GM2N",
-            "name": "Hairdryer",
-            "description": "This lightweight hairdryer has 3 heat and speed settings. It's perfect for travel.",
+            "name": "Dog Hairdryer",
+            "description": "This dog hairdryer is perfect for drying your pet after a bath.",
             "picture": "/static/img/products/hairdryer.jpg",
             "priceUsd": {
                 "currencyCode": "USD",
@@ -62,9 +62,9 @@
         },
         {
             "id": "0PUK6V6EV0",
-            "name": "Candle Holder",
-            "description": "This small but intricate candle holder is an excellent gift.",
-            "picture": "/static/img/products/candle-holder.jpg",
+            "name": "Pet Poster",
+            "description": "This poster is a great way to show your love for your pet.",
+            "picture": "/static/img/products/pet-poster.jpg",
             "priceUsd": {
                 "currencyCode": "USD",
                 "units": 18,
@@ -74,39 +74,39 @@
         },
         {
             "id": "LS4PSXUNUM",
-            "name": "Salt & Pepper Shakers",
-            "description": "Add some flavor to your kitchen.",
-            "picture": "/static/img/products/salt-and-pepper-shakers.jpg",
+            "name": "I Woof You Dog Treats",
+            "description": "These dog treats are made with love and are perfect for your furry friend.",
+            "picture": "/static/img/products/dog-treats.jpg",
             "priceUsd": {
                 "currencyCode": "USD",
                 "units": 18,
                 "nanos": 490000000
             },
-            "categories": ["kitchen"]
+            "categories": ["food", "treats"]
         },
         {
             "id": "9SIQT8TOJO",
-            "name": "Bamboo Glass Jar",
-            "description": "This bamboo glass jar can hold 57 oz (1.7 l) and is perfect for any kitchen.",
-            "picture": "/static/img/products/bamboo-glass-jar.jpg",
+            "name": "Godd Dog Bed",
+            "description": "This dog bed is perfect for your pet to relax and sleep comfortably.",
+            "picture": "/static/img/products/good-dog-bed.jpg",
             "priceUsd": {
                 "currencyCode": "USD",
                 "units": 5,
                 "nanos": 490000000
             },
-            "categories": ["kitchen"]
+            "categories": ["bedroom", "furniture"]
         },
         {
             "id": "6E92ZMYYFZ",
-            "name": "Mug",
-            "description": "A simple mug with a mustard interior.",
-            "picture": "/static/img/products/mug.jpg",
+            "name": "Environmentally Friendly Dog Water Bowl",
+            "description": "This environmentally friendly dog water bowl is made from recycled materials.",
+            "picture": "/static/img/products/environmentally-friendly-dog-water-bowl.jpg",
             "priceUsd": {
                 "currencyCode": "USD",
                 "units": 8,
                 "nanos": 990000000
             },
-            "categories": ["kitchen"]
+            "categories": ["accessories"]
         }
     ]
 }

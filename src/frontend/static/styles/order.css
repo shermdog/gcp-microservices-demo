@@ -43,11 +43,11 @@
     border-bottom: 1px solid rgba(154, 160, 166, 0.5);
 }
 
-.order-complete-section .cymbal-button-primary {
+.order-complete-section .purple-button-primary {
     margin-top: 24px;
 }
 
-.order-complete-section a.cymbal-button-primary:hover {
+.order-complete-section a.purple-button-primary:hover {
     text-decoration: none;
     color: white;
 }

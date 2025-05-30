@@ -28,7 +28,7 @@
             "id": "1YMWWN1N4O",
             "name": "Custom Dog Food Bowl",
             "description": "This custom dog food bowl is perfect for your pet.",
-            "picture": "/static/img/products/custom-dog-food-bowl.jpg",
+            "picture": "/static/img/products/dog-food-bowl.jpg",
             "priceUsd": {
                 "currencyCode": "USD",
                 "units": 109,
@@ -88,7 +88,7 @@
             "id": "9SIQT8TOJO",
             "name": "Godd Dog Bed",
             "description": "This dog bed is perfect for your pet to relax and sleep comfortably.",
-            "picture": "/static/img/products/good-dog-bed.jpg",
+            "picture": "/static/img/products/godo-dog-bed.jpg",
             "priceUsd": {
                 "currencyCode": "USD",
                 "units": 5,

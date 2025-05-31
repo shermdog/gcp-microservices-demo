@@ -50,6 +50,7 @@ var (
 				Funcs(template.FuncMap{
 			"renderMoney":        renderMoney,
 			"renderCurrencyLogo": renderCurrencyLogo,
+			"renderImage":        renderImage,
 		}).ParseGlob("templates/*.html"))
 	plat platformDetails
 )
@@ -623,6 +624,22 @@ func renderCurrencyLogo(currencyCode string) string {
 		logo = val
 	}
 	return logo
+}
+
+func renderImage(product pb.Product) string {
+	imageFullPath := fmt.Sprintf(".%s", product.Picture)
+	_, err := os.Open(imageFullPath)
+	if err != nil {
+		errMsg := fmt.Sprintf("failed to load image for %s", product.Name)
+		log.WithFields(logrus.Fields{
+			"error": err,
+			"Id":   product.Id,
+			"Name": product.Name,
+		}).Warn(errMsg)
+		// If the image file does not exist, return a default image path
+		return "/static/img/no-image.jpg"
+	}
+	return product.Picture
 }
 
 func stringinSlice(slice []string, val string) bool {

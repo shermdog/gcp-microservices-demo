@@ -57,7 +57,7 @@
                     <div class="row cart-summary-item-row">
                         <div class="col-md-4 pl-md-0">
                             <a href="{{ $.baseUrl }}/product/{{.Item.Id}}">
-                                <img class="img-fluid" alt="" src="{{ $.baseUrl }}{{.Item.Picture}}" />
+                                <img class="img-fluid" alt="" src="{{ $.baseUrl }}{{ renderImage .Item }}" />
                             </a>
                         </div>
                         <div class="col-md-8 pr-md-0">

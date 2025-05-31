@@ -44,7 +44,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: us-docker.pkg.dev/datadog-community/gcp-demo/frontend:v2
+          image: us-docker.pkg.dev/datadog-community/gcp-demo/frontend:v9
           ports:
           - containerPort: 8080
           readinessProbe:

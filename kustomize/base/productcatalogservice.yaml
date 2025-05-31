@@ -43,7 +43,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: true
-        image: us-docker.pkg.dev/datadog-community/gcp-demo/productcatalogservice:v2
+        image: us-docker.pkg.dev/datadog-community/gcp-demo/productcatalogservice:v3
         ports:
         - containerPort: 3550
         env:

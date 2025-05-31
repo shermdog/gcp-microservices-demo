@@ -86,12 +86,12 @@
         },
         {
             "id": "9SIQT8TOJO",
-            "name": "Godd Dog Bed",
+            "name": "Doggo Bed",
             "description": "This dog bed is perfect for your pet to relax and sleep comfortably.",
-            "picture": "/static/img/products/godo-dog-bed.jpg",
+            "picture": "/static/img/products/dog-bed.jpg",
             "priceUsd": {
                 "currencyCode": "USD",
-                "units": 5,
+                "units": 50,
                 "nanos": 490000000
             },
             "categories": ["bedroom", "furniture"]
